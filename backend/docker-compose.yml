@@ -1,0 +1,25 @@
+version: '3.9'
+services:
+  # redis:
+  #   image: bitnami/redis:6.0.9-debian-10-r66
+  #   ports:
+  #     - "6379:6379"
+  db:
+    image: postgres:12
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: localUser
+      POSTGRES_PASSWORD: localPass
+      POSTGRES_DB: localDb
+
+  backend:
+    image: job-board-backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+volumes:
+  postgres_data:

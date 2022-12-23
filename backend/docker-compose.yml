@@ -4,8 +4,28 @@ services:
   #   image: bitnami/redis:6.0.9-debian-10-r66
   #   ports:
   #     - "6379:6379"
+  rabbitmq:
+    image: rabbitmq:3.10.1
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    hostname: rabbit
+    ports:
+      - "5672:5672"
+    restart: always
+    volumes:
+      - rabbit_hole:/var/lib/rabbitmq
+  celery:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=postgresql://localUser:localPass@host.docker.internal:5432/localDb
+      - RABBITMQ_URL=amqp://guest:guest@host.docker.internal:5672
+    depends_on:
+      - rabbitmq
   db:
-    image: postgres:12
+    image: postgres:14
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
@@ -14,12 +34,18 @@ services:
       POSTGRES_USER: localUser
       POSTGRES_PASSWORD: localPass
       POSTGRES_DB: localDb
-
-  backend:
-    image: job-board-backend
-    ports:
-      - "8000:8000"
-    depends_on:
-      - db
+  # backend:
+  #   image: job-board-backend
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - db
+  # frontend:
+  #   image: job-board-frontend
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
 volumes:
+  rabbit_hole:
   postgres_data:

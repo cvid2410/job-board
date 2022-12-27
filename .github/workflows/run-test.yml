@@ -16,7 +16,12 @@ jobs:
           python -m pip install --upgrade pip
           pip install poetry
           poetry install
-          pytest
+  output-context:
+    runs-on: ubuntu-latest
+    steps:
+      - name: output github context
+        run: echo "${{ toJSON(github) }}"
+      
       
       
       

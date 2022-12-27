@@ -10,6 +10,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Goes into the backend folder
+        working-directory: ./backend
       - name: Install Dependencies
         run: pip install requirements.txt
       - name: Run tests
